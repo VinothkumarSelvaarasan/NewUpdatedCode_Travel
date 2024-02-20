@@ -1,0 +1,14 @@
+<h1>View Review</h1>
+
+<div class="blog-wrapper">
+  <div class="blog-card" *ngFor="let rev of review">
+    <div class="card-img"><img src="https://images.unsplash.com/photo-1518235506717-e1ed3306a89b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80">
+      <h1>{{rev.travelDestination.state}}</h1>
+    </div>
+    <div class="card-text"><p>{{rev.travelDestination.locationName}}</p></div>
+    <div class="card-text"><p>{{rev.reviewDetails}}</p></div>
+    <p>Reviewed By:{{rev.customer.name}}</p>
+    <div class="read-more">Explore More</div>
+  </div>
+ 
+</div>

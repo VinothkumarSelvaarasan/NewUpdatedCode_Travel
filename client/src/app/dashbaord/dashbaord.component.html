@@ -1,0 +1,8 @@
+<div class="row text-center">
+<h1 class="text-capitalize">Welcome to Travel Management System</h1>
+</div>
+<div *ngIf="roleName === 'TRAVELLER'">
+  <app-addreview></app-addreview>
+  <app-view-review></app-view-review>
+</div>
+<app-view-destination></app-view-destination>
