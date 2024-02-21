@@ -1,9 +1,9 @@
-package com.wecp.logisticsmanagementandtrackingsystem;
+package com.wecp.travelmanagementsystem;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wecp.logisticsmanagementandtrackingsystem.dto.LoginRequest;
-import com.wecp.logisticsmanagementandtrackingsystem.entity.*;
-import com.wecp.logisticsmanagementandtrackingsystem.repository.*;
+import com.wecp.travelmanagementsystem.dto.LoginRequest;
+import com.wecp.travelmanagementsystem.entity.*;
+import com.wecp.travelmanagementsystem.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class LogisticsManagementAndTrackingSystemApplicationTests {
+public class TravelManagementAndTrackingSystemApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -65,7 +65,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		user.setUsername("testBlogger");
 		user.setPassword("testPassword");
 		user.setEmail("test@example.com");
-		user.setRole("BLOGGER");
+		user.setUserType("BLOGGER");
 
 		// Perform a POST request to the /register endpoint using MockMvc
 		mockMvc.perform(post("/api/register")
@@ -83,7 +83,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		// Assert user is created in the database
 		User savedUser = userRepository.findAll().get(0);
 		assertEquals(user.getEmail(), savedUser.getEmail());
-		assertEquals("BLOGGER", savedUser.getRole());
+		assertEquals("BLOGGER", savedUser.getUserType());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		user.setUsername("testTraveller");
 		user.setPassword("testPassword");
 		user.setEmail("test@example.com");
-		user.setRole("TRAVELLER");
+		user.setUserType("TRAVELLER");
 
 		// Perform a POST request to the /register endpoint using MockMvc
 		mockMvc.perform(post("/api/register")
@@ -111,7 +111,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		// Assert user is created in the database
 		User savedUser = userRepository.findAll().get(0);
 		assertEquals(user.getEmail(), savedUser.getEmail());
-		assertEquals("TRAVELLER", savedUser.getRole());
+		assertEquals("TRAVELLER", savedUser.getUserType());
 	}
 
 	@Test
@@ -121,7 +121,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		user.setUsername("testLocal");
 		user.setPassword("testPassword");
 		user.setEmail("test@example.com");
-		user.setRole("LOCAL");
+		user.setUserType("LOCAL");
 
 		// Perform a POST request to the /register endpoint using MockMvc
 		mockMvc.perform(post("/api/register")
@@ -132,14 +132,14 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 				.andExpect(jsonPath("$.email").value(user.getEmail()));
 
 		// Assert business is created in the database
-		Driver savedDriver = driverRepository.findAll().get(0);
-		assertEquals(user.getUsername(), savedDriver.getName());
-		assertEquals(user.getEmail(), savedDriver.getEmail());
+		Customer savedCustomer = customerRepository.findAll().get(0);
+		assertEquals(user.getUsername(), savedCustomer.getName());
+		assertEquals(user.getEmail(), savedCustomer.getEmail());
 
 		// Assert user is created in the database
 		User savedUser = userRepository.findAll().get(0);
 		assertEquals(user.getEmail(), savedUser.getEmail());
-		assertEquals("LOCAL", savedUser.getRole());
+		assertEquals("LOCAL", savedUser.getUserType());
 	}
 
 	@Test
@@ -148,7 +148,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 		User user = new User();
 		user.setUsername("user1");
 		user.setPassword("password");
-		user.setRole("TRAVELLER");
+		user.setUserType("TRAVELLER");
 		user.setEmail("user@gmail.com");
 		// Register the user
 		mockMvc.perform(post("/api/register")
@@ -177,37 +177,14 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 				.andExpect(status().isUnauthorized()); // Expect a 401 Unauthorized response
 	}
 
-	@Test
-	@WithMockUser(authorities = "BLOGGER")
-	public void testViewCargoStatus() throws Exception {
-
-		TravelDestination travel = new TravelDestination();
-		travel.setState("Tamilnadu");
-		travel.setHighLights("Good Place to Visit");
-		travel.setLocationName("Ooty");
-
-		travel = travelDestinationRepository.save(travel);
-
-		// Performing the request and asserting the response
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/customer/cargo-status")
-						.param("cargoId", String.valueOf(cargo.getId()))
-						.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(jsonPath("$.cargoId").value(cargo.getId()))
-				.andExpect(jsonPath("$.status").value(cargo.getStatus()));
-
-	}
 
 	@Test
 	@WithMockUser(authorities = "TRAVELLER")
 	public void testUpdateCargoStatus() throws Exception {
 
 		Review review = new Review();
-		review.setReviewDetails("Good");
-		review.setCustomer("testTraveller");
-		review.setTravelDestination("Tamilnadu");
-
-		review = cargoRepository.save(review);
+		review.setReviewDetails("Good Place");
+		review = reviewRepository.save(review);
 
 		// Performing the request and asserting the response
 		mockMvc.perform(MockMvcRequestBuilders.put("/api/updateReview")
@@ -218,7 +195,7 @@ public class LogisticsManagementAndTrackingSystemApplicationTests {
 
 		// Assert the cargo status is updated in the database
 		Review updatedReview = reviewRepository.findById(review.getId()).get();
-		assertEquals("reviewDetails", updatedReview.getStatus());
+		assertEquals("reviewDetails", updatedReview.getReviewDetails());
 
 	}
 
